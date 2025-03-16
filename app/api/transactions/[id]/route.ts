@@ -1,9 +1,10 @@
 import { NextResponse } from 'next/server';
 import clientPromise from '@/lib/db';
 import { ObjectId } from 'mongodb';
+import type { NextRequest } from 'next/server';
 
 export async function DELETE(
-  request: Request,
+  request: NextRequest,
   { params }: { params: { id: string } }
 ) {
   try {
@@ -31,7 +32,7 @@ export async function DELETE(
 }
 
 export async function PUT(
-  request: Request,
+  request: NextRequest,
   { params }: { params: { id: string } }
 ) {
   try {
