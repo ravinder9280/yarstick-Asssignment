@@ -7,8 +7,9 @@ import {
   XAxis,  YAxis,
   CartesianGrid,
   Tooltip,
-  ResponsiveContainer} from 'recharts';
-import { format, parseISO, startOfMonth, endOfMonth } from 'date-fns';
+  ResponsiveContainer
+} from 'recharts';
+import { format } from 'date-fns';
 
 interface Transaction {
   _id: string;
@@ -16,8 +17,13 @@ interface Transaction {
   date: string;
 }
 
+interface MonthlyData {
+  month: string;
+  amount: number;
+}
+
 export default function MonthlyExpensesChart() {
-  const [monthlyData, setMonthlyData] = useState<any[]>([]);
+  const [monthlyData, setMonthlyData] = useState<MonthlyData[]>([]);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -25,8 +31,7 @@ export default function MonthlyExpensesChart() {
         const response = await fetch('/api/transactions');
         const transactions: Transaction[] = await response.json();
 
-        // Process transactions into monthly data
-        const monthlyTotals = transactions.reduce((acc: any, transaction) => {
+        const monthlyTotals = transactions.reduce((acc: Record<string, number>, transaction) => {
           const date = new Date(transaction.date);
           const monthKey = format(date, 'MMM yyyy');
           
@@ -39,11 +44,11 @@ export default function MonthlyExpensesChart() {
 
         const chartData = Object.entries(monthlyTotals).map(([month, total]) => ({
           month,
-          amount: Math.abs(Number(total)),
+          amount: Math.abs(total),
         }));
 
         setMonthlyData(chartData);
-        console.log(chartData)
+        console.log(chartData);
       } catch (error) {
         console.error('Failed to fetch transaction data:', error);
       }

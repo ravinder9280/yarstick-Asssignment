@@ -1,8 +1,7 @@
 'use client';
 import { toast } from 'sonner';
 
-import { useState } from 'react';
-import { useForm } from 'react-hook-form';
+import { useForm, SubmitHandler } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
 import { Button } from '@/components/ui/button';
@@ -18,13 +17,15 @@ const transactionSchema = z.object({
   date: z.string().min(1, 'Date is required'),
 });
 
+type TransactionFormValues = z.infer<typeof transactionSchema>;
+
 export default function TransactionForm() {
   const {
     register,
     handleSubmit,
     reset,
     formState: { errors },
-  } = useForm({
+  } = useForm<TransactionFormValues>({
     resolver: zodResolver(transactionSchema),
     defaultValues: {
       description: '',
@@ -33,7 +34,7 @@ export default function TransactionForm() {
     },
   });
 
-  const onSubmit = async (data: any) => {
+  const onSubmit: SubmitHandler<TransactionFormValues> = async (data) => {
     try {
       const response = await fetch('/api/transactions', {
         method: 'POST',
@@ -45,11 +46,11 @@ export default function TransactionForm() {
 
       if (!response.ok) throw new Error('Failed to add transaction');
 
-    toast.success("Transaction Added Successfully")
+      toast.success("Transaction Added Successfully");
       reset();
     } catch (error) {
-        console.error(error);
-        toast.error("Some error Occured")
+      console.error(error);
+      toast.error("Some error Occured");
     }
   };
 

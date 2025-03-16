@@ -25,11 +25,11 @@ export default function TransactionList() {
     try {
       const response = await fetch('/api/transactions');
       if (!response.ok) throw new Error('Failed to fetch transactions');
-      const data = await response.json();
+      const data: Transaction[] = await response.json();
       setTransactions(data);
     } catch (error) {
-        toast.error("error occured")
-
+        console.log(error)
+      toast.error("Error occurred");
     }
   };
 
@@ -41,10 +41,12 @@ export default function TransactionList() {
 
       if (!response.ok) throw new Error('Failed to delete transaction');
 
-      toast.success("transaction Deleted Successfully")
+      toast.success("Transaction Deleted Successfully");
       fetchTransactions();
     } catch (error) {
-        toast.error("Error Occured")
+        console.log(error)
+
+      toast.error("Error occurred");
     }
   };
 
@@ -62,7 +64,7 @@ export default function TransactionList() {
           {transactions.map((transaction) => (
             <div
               key={transaction._id}
-              className="flex items-center justify-between  p-4 border rounded-lg"
+              className="flex items-center justify-between p-4 border rounded-lg"
             >
               <div>
                 <h3 className="font-medium">{transaction.description}</h3>
